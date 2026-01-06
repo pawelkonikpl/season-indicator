@@ -1,17 +1,174 @@
 class SeasonIndicatorCard extends HTMLElement {
+  static get styles() {
+    return `
+      .card {
+        padding: 24px;
+        background: var(--ha-card-background, var(--card-background-color, white));
+        border-radius: var(--ha-card-border-radius, 12px);
+        box-shadow: var(--ha-card-box-shadow, 0 2px 8px rgba(0,0,0,0.1));
+      }
+
+      .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 24px;
+      }
+
+      .current-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .season-icon {
+        font-size: 40px;
+        line-height: 1;
+      }
+
+      .season-details {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .current-season {
+        font-size: 24px;
+        font-weight: bold;
+        color: var(--primary-text-color);
+        line-height: 1.2;
+      }
+
+      .season-progress {
+        font-size: 14px;
+        color: var(--secondary-text-color);
+        margin-top: 2px;
+      }
+
+      .day-info {
+        font-size: 14px;
+        color: var(--secondary-text-color);
+        text-align: right;
+      }
+
+      .day-number {
+        font-size: 20px;
+        font-weight: bold;
+        color: var(--primary-text-color);
+      }
+
+      .timeline-container {
+        position: relative;
+        margin: 20px 0;
+      }
+
+      .timeline {
+        display: flex;
+        height: 50px;
+        border-radius: 25px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        position: relative;
+      }
+
+      .season-segment {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        transition: all 0.3s ease;
+      }
+
+      .season-segment:not(:last-child)::after {
+        content: '';
+        position: absolute;
+        right: 0;
+        top: 10%;
+        height: 80%;
+        width: 1px;
+        background: rgba(255,255,255,0.3);
+      }
+
+      .season-segment.active {
+        box-shadow: inset 0 0 20px rgba(0,0,0,0.1);
+      }
+
+      .season-name {
+        color: white;
+        font-weight: bold;
+        font-size: 14px;
+        text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        z-index: 1;
+      }
+
+      .indicator-container {
+        position: relative;
+        height: 40px;
+        margin-top: -10px;
+      }
+
+      .indicator {
+        position: absolute;
+        transform: translateX(-50%);
+        transition: left 0.5s ease;
+      }
+
+      .indicator-line {
+        width: 3px;
+        height: 30px;
+        background: var(--primary-text-color, #333);
+        margin: 0 auto;
+        border-radius: 2px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      }
+
+      .indicator-dot {
+        width: 16px;
+        height: 16px;
+        border: 3px solid var(--ha-card-background, white);
+        border-radius: 50%;
+        margin: -5px auto 0;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        animation: pulse 2s ease-in-out infinite;
+      }
+
+      @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+      }
+
+      .labels {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 8px;
+        padding: 0 4px;
+      }
+
+      .label {
+        font-size: 11px;
+        color: var(--secondary-text-color);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+      }
+
+      .label-icon {
+        font-size: 16px;
+      }
+    `;
+  }
+
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
-    this._cssText = null;
-    this._stylesLoaded = false;
-    this.loadStyles();
   }
 
   setConfig(config) {
     if (!config) {
       throw new Error('Invalid configuration');
     }
-    
+
     // Default names, colors and UI texts
     this.config = {
       spring_name: config.spring_name || 'Spring',
@@ -26,26 +183,13 @@ class SeasonIndicatorCard extends HTMLElement {
       day_of_year_text: config.day_of_year_text || 'day of year',
       ...config
     };
-    
+
     this.render();
   }
 
   set hass(hass) {
     this._hass = hass;
     this.render();
-  }
-
-  async loadStyles() {
-    if (this._stylesLoaded) return;
-    try {
-      const resp = await fetch('season-indicator-card.css');
-      if (!resp.ok) return;
-      this._cssText = await resp.text();
-      this._stylesLoaded = true;
-      this.render();
-    } catch (e) {
-      // ignore - fallback to inline styles if fetch fails
-    }
   }
 
   getCardSize() {
@@ -113,18 +257,18 @@ class SeasonIndicatorCard extends HTMLElement {
   }
 
   render() {
-    const { 
-      seasons, 
-      currentSeason, 
-      seasonIndex, 
+    const {
+      seasons,
+      currentSeason,
+      seasonIndex,
       progressInSeason,
-      dayOfYear, 
-      yearProgress 
+      dayOfYear,
+      yearProgress
     } = this.getSeasonInfo();
 
     this.shadowRoot.innerHTML = `
-      <style id="season-styles"></style>
-      
+      <style>${SeasonIndicatorCard.styles}</style>
+
       <ha-card>
         <div class="card">
           <div class="header">
@@ -172,12 +316,6 @@ class SeasonIndicatorCard extends HTMLElement {
         </div>
       </ha-card>
     `;
-
-    // Inject fetched CSS into the placeholder <style> inside the shadow root
-    const stylePlaceholder = this.shadowRoot.querySelector('#season-styles');
-    if (stylePlaceholder && this._cssText) {
-      stylePlaceholder.textContent = this._cssText;
-    }
   }
 }
 
