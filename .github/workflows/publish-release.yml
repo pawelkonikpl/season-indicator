@@ -20,7 +20,7 @@ jobs:
           TAG=${{ github.ref_name }}
           ZIPNAME=season-indicator-card-${TAG}.zip
           rm -f "$ZIPNAME"
-          FILES=("season-indicator-card.js" "season-indicator-card.css" "README.md" "LICENSE" "hacs.json" "screenshot.png")
+          FILES=("season-indicator-card.js" "season-indicator-card.css" "README.md" "LICENSE" "hacs.json" "screenshot.png" "manifest.json")
           for f in "${FILES[@]}"; do
             if [ -f "$f" ]; then
               echo "Adding $f"
