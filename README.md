@@ -18,11 +18,9 @@ Custom card for Home Assistant showing the current season as a **horizontal time
 
 ## 📦 Installation
 
-### Method 1: HACS (recommended when available)
-1. Open HACS in Home Assistant
-2. Click on "Frontend"
-3. Click the "+" button in the bottom-right
-4. Search for "Season Indicator Card"
+### Method 1: HACS (recommended)
+1. In GitHub create a release with a semver tag (for example `v1.0.0`). The repository includes a `hacs.json` file so HACS can detect this as a frontend plugin.
+2. In Home Assistant, open HACS → Frontend → Click the "+" button and search for "Season Indicator Card" (or add the repository manually by URL).
 
 ### Method 2: Manual install
 **Step 1: Copy the file**
@@ -83,16 +81,16 @@ winter_color: "#3498db"
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `spring_name` | string | `"Wiosna"` | Spring name |
-| `summer_name` | string | `"Lato"` | Summer name |
-| `autumn_name` | string | `"Jesień"` | Autumn name |
-| `winter_name` | string | `"Zima"` | Winter name |
+| `spring_name` | string | `"Spring"` | Spring name |
+| `summer_name` | string | `"Summer"` | Summer name |
+| `autumn_name` | string | `"Autumn"` | Autumn name |
+| `winter_name` | string | `"Winter"` | Winter name |
 | `spring_color` | string | `"#4CAF50"` | Spring color (hex) |
 | `summer_color` | string | `"#FFC107"` | Summer color (hex) |
 | `autumn_color` | string | `"#FF9800"` | Autumn color (hex) |
 | `winter_color` | string | `"#2196F3"` | Winter color (hex) |
-| `day_text` | string | `"Dzień"` | Text for "Day" |
-| `day_of_year_text` | string | `"dzień roku"` | Text for "day of year" |
+| `day_text` | string | `"Day"` | Text for "Day" |
+| `day_of_year_text` | string | `"day of year"` | Text for "day of year" |
 
 ## 🔧 How it works
 
@@ -127,5 +125,7 @@ Example:
 ## 📝 License
 
 MIT License
+
+This project is distributed under the MIT License — see the bundled `LICENSE` file for details.
 
 If you'd like a shorter README variant or a Polish version, let me know!

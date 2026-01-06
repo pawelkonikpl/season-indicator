@@ -1,0 +1,56 @@
+name: Validate Season Indicator Card
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  validate:
+    name: Validate card files and JS
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate required files exist
+        run: |
+          set -e
+          FILES=("season-indicator-card.js" "season-indicator-card.css" "README.md")
+          MISSING=0
+          for f in "${FILES[@]}"; do
+            if [ ! -f "$f" ]; then
+              echo "ERROR: required file '$f' not found"
+              MISSING=1
+            else
+              echo "Found $f"
+            fi
+          done
+          if [ "$MISSING" -ne 0 ]; then
+            echo "One or more required files are missing."
+            exit 1
+          fi
+
+      - name: Validate JS exports and metadata
+        run: |
+          set -e
+          JSFILE=season-indicator-card.js
+          if ! grep -E "customElements\.define\(['\"]season-indicator-card['\"]" "$JSFILE" >/dev/null; then
+            echo "ERROR: customElements.define('season-indicator-card') not found in $JSFILE"
+            exit 1
+          else
+            echo "Found customElements.define('season-indicator-card')"
+          fi
+
+          if ! grep -q "window\.customCards" "$JSFILE"; then
+            echo "ERROR: window.customCards metadata not found in $JSFILE"
+            exit 1
+          else
+            echo "Found window.customCards metadata"
+          fi
+
+      - name: Optional: show first lines of the JS file
+        run: |
+          echo "---- top of season-indicator-card.js ----"
+          head -n 60 season-indicator-card.js || true
+

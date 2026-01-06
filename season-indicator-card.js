@@ -14,16 +14,16 @@ class SeasonIndicatorCard extends HTMLElement {
     
     // Default names, colors and UI texts
     this.config = {
-      spring_name: config.spring_name || 'Wiosna',
-      summer_name: config.summer_name || 'Lato',
-      autumn_name: config.autumn_name || 'Jesień',
-      winter_name: config.winter_name || 'Zima',
+      spring_name: config.spring_name || 'Spring',
+      summer_name: config.summer_name || 'Summer',
+      autumn_name: config.autumn_name || 'Autumn',
+      winter_name: config.winter_name || 'Winter',
       spring_color: config.spring_color || '#4CAF50',
       summer_color: config.summer_color || '#FFC107',
       autumn_color: config.autumn_color || '#FF9800',
       winter_color: config.winter_color || '#2196F3',
-      day_text: config.day_text || 'Dzień',
-      day_of_year_text: config.day_of_year_text || 'dzień roku',
+      day_text: config.day_text || 'Day',
+      day_of_year_text: config.day_of_year_text || 'day of year',
       ...config
     };
     
@@ -54,62 +54,61 @@ class SeasonIndicatorCard extends HTMLElement {
 
   getSeasonInfo() {
     const now = new Date();
-    const start = new Date(now.getFullYear(), 0, 0);
+    const year = now.getFullYear();
+    const start = new Date(year, 0, 0);
     const diff = now - start;
     const oneDay = 1000 * 60 * 60 * 24;
     let dayOfYear = Math.floor(diff / oneDay);
-    
+
+    // Leap year check
+    const isLeap = (year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0));
+    const daysInYear = isLeap ? 366 : 365;
+
     // Shift the year so it starts from spring (day 80 becomes day 1)
     // This makes the timeline intuitive: Spring -> Summer -> Autumn -> Winter
     let adjustedDay = dayOfYear - 79; // dzień 80 (21 marca) staje się dniem 1
     if (adjustedDay <= 0) {
-      adjustedDay = 365 + adjustedDay; // Dla dni 1-79 (styczeń-marzec)
+      adjustedDay = daysInYear + adjustedDay; // Dla dni 1-79 (styczeń-marzec)
     }
-    
-    // Division of the year into seasons - now in logical order
+
+    // Division of the year into seasons - adjust for leap years
+    // Spring: 92 days (Mar 21-Jun 20), Summer: 94 (Jun 21-Sep 22), Autumn: 89 (Sep 23-Dec 20), Winter: 90 or 91 (Dec 21-Mar 20)
+    // In leap years, add the extra day to summer (most common convention)
+    const springDays = 92;
+    const summerDays = isLeap ? 95 : 94;
+    const autumnDays = 89;
+    const winterDays = daysInYear - (springDays + summerDays + autumnDays); // 90 or 91
+
     const seasons = [
-      { name: this.config.spring_name, start: 1, end: 92, color: this.config.spring_color, icon: '🌸', days: 92 },
-      { name: this.config.summer_name, start: 93, end: 186, color: this.config.summer_color, icon: '☀️', days: 94 },
-      { name: this.config.autumn_name, start: 187, end: 275, color: this.config.autumn_color, icon: '🍂', days: 89 },
-      { name: this.config.winter_name, start: 276, end: 365, color: this.config.winter_color, icon: '❄️', days: 90 }
+      { name: this.config.spring_name, start: 1, end: springDays, color: this.config.spring_color, icon: '🌸', days: springDays },
+      { name: this.config.summer_name, start: springDays + 1, end: springDays + summerDays, color: this.config.summer_color, icon: '☀️', days: summerDays },
+      { name: this.config.autumn_name, start: springDays + summerDays + 1, end: springDays + summerDays + autumnDays, color: this.config.autumn_color, icon: '🍂', days: autumnDays },
+      { name: this.config.winter_name, start: springDays + summerDays + autumnDays + 1, end: daysInYear, color: this.config.winter_color, icon: '❄️', days: winterDays }
     ];
-    
+
     let currentSeason;
     let seasonIndex;
     let progressInSeason;
     
-    if (adjustedDay >= 1 && adjustedDay <= 92) {
-      // Spring: March 21 - June 20
-      currentSeason = seasons[0];
-      seasonIndex = 0;
-      progressInSeason = adjustedDay - 1;
-    } else if (adjustedDay >= 93 && adjustedDay <= 186) {
-      // Summer: June 21 - September 22
-      currentSeason = seasons[1];
-      seasonIndex = 1;
-      progressInSeason = adjustedDay - 93;
-    } else if (adjustedDay >= 187 && adjustedDay <= 275) {
-      // Autumn: September 23 - December 20
-      currentSeason = seasons[2];
-      seasonIndex = 2;
-      progressInSeason = adjustedDay - 187;
-    } else {
-      // Winter: December 21 - March 20
-      currentSeason = seasons[3];
-      seasonIndex = 3;
-      progressInSeason = adjustedDay - 276;
+    for (let i = 0; i < seasons.length; i++) {
+      if (adjustedDay >= seasons[i].start && adjustedDay <= seasons[i].end) {
+        currentSeason = seasons[i];
+        seasonIndex = i;
+        progressInSeason = adjustedDay - seasons[i].start;
+        break;
+      }
     }
-    
+
     // Calculate the indicator position on the timeline (0-100%)
-    const yearProgress = (adjustedDay / 365) * 100;
-    
-    return { 
-      seasons, 
-      currentSeason, 
-      seasonIndex, 
+    const yearProgress = (adjustedDay / daysInYear) * 100;
+
+    return {
+      seasons,
+      currentSeason,
+      seasonIndex,
       progressInSeason,
-      dayOfYear, 
-      yearProgress 
+      dayOfYear,
+      yearProgress
     };
   }
 
