@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "slug": "season-indicator-card",
   "description": "A Lovelace card displaying the current season as a timeline.",
+  "domain": "lovelace",
   "type": "plugin",
   "homeassistant": "frontend",
   "filename": "season-indicator-card.js",
