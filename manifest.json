@@ -1,6 +1,6 @@
 {
   "name": "Season Indicator Card",
-  "version": "v1.0.8",
+  "version": "1.0.9",
   "slug": "season-indicator-card",
   "description": "A Lovelace card displaying the current season as a timeline.",
   "domain": "season-indicator",
