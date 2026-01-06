@@ -48,9 +48,3 @@ jobs:
           else
             echo "Found window.customCards metadata"
           fi
-
-      - name: Optional: show first lines of the JS file
-        run: |
-          echo "---- top of season-indicator-card.js ----"
-          head -n 60 season-indicator-card.js || true
-
