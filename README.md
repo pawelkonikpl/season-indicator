@@ -1,131 +1,39 @@
 # Season Indicator Card
 
-Custom card for Home Assistant showing the current season as a **horizontal timeline** with colored sections and a moving indicator.
+A simple Home Assistant custom card that displays the current season on a horizontal timeline with a moving indicator.
 
-## 🎨 Features
+## Installation (HACS)
 
-- **Single horizontal timeline** split into 4 colored season sections:
-  - 🌸 **Spring** (green) - Mar 21 - Jun 20 (92 days)
-  - ☀️ **Summer** (yellow) - Jun 21 - Sep 22 (94 days)
-  - 🍂 **Autumn** (orange) - Sep 23 - Dec 20 (89 days)
-  - ❄️ **Winter** (blue) - Dec 21 - Mar 20 (90 days)
-- **Animated indicator** showing the exact position in the year
-- Displays current season with an icon
-- Shows progress within the current season (e.g. "Day 15 of 92")
-- Day of year (1-365)
-- Labels with season icons under the timeline
-- Pulsing dot on the indicator
+This repository is packaged for HACS. The recommended way to install the card is via HACS.
 
-## 📦 Installation
+1. Create a release on GitHub and tag it with a semver version (for example `v1.0.0`). The repository includes a `hacs.json` file so HACS will detect it as a frontend plugin.
+2. In Home Assistant open **HACS → Frontend** and click the **+** button. Search for "Season Indicator Card" and install it, or add the repository manually by URL.
 
-### Method 1: HACS (recommended)
-1. In GitHub create a release with a semver tag (for example `v1.0.0`). The repository includes a `hacs.json` file so HACS can detect this as a frontend plugin.
-2. In Home Assistant, open HACS → Frontend → Click the "+" button and search for "Season Indicator Card" (or add the repository manually by URL).
+Note: The repository includes a separate stylesheet file `season-indicator-card.css`. When installed via HACS the CSS is provided together with the card. To customize appearance you can edit that file or override Home Assistant theme variables.
 
-### Method 2: Manual install
-**Step 1: Copy the file**
-Copy the file `season-indicator-card.js` to:
-```
-/config/www/season-indicator-card.js
-```
-**Step 2: Add resource**
-Choose one of the methods:
+## Usage
 
-#### A) Via UI (easier):
-1. Go to **Settings** → **Dashboards** → **Resources** tab
-2. Click **"ADD RESOURCE"**
-3. Enter:
-   - **URL:** `/local/season-indicator-card.js`
-   - **Resource type:** **JavaScript Module**
-4. Click **"CREATE"**
+Add the card to Lovelace (example):
 
-#### B) Via configuration.yaml:
-```yaml
-lovelace:
-  mode: storage
-  resources:
-    - url: /local/season-indicator-card.js
-      type: module
-```
-**Step 3: Refresh**
-Clear your browser cache (Ctrl+F5) or restart Home Assistant
-
-## 🚀 Usage
-
-### Basic configuration (default names):
 ```yaml
 type: custom:season-indicator-card
-```
-### Configure custom names:
-```yaml
-type: custom:season-indicator-card
-spring_name: "Spring"
-summer_name: "Summer"
-autumn_name: "Fall"
-winter_name: "Winter"
-```
-### Full config (names + colors):
-```yaml
-type: custom:season-indicator-card
-spring_name: "Spring 🌱"
-summer_name: "Summer ☀"
-autumn_name: "Autumn 🍁"
-winter_name: "Winter ⛄"
-spring_color: "#2ecc71"
-summer_color: "#f39c12"
-autumn_color: "#d35400"
-winter_color: "#3498db"
+# Optional customizations:
+# spring_name: "Spring"
+# summer_name: "Summer"
+# autumn_name: "Autumn"
+# winter_name: "Winter"
+# spring_color: "#4CAF50"
+# summer_color: "#FFC107"
+# autumn_color: "#FF9800"
+# winter_color: "#2196F3"
 ```
 
-## ⚙️ Configuration options
+## Troubleshooting
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `spring_name` | string | `"Spring"` | Spring name |
-| `summer_name` | string | `"Summer"` | Summer name |
-| `autumn_name` | string | `"Autumn"` | Autumn name |
-| `winter_name` | string | `"Winter"` | Winter name |
-| `spring_color` | string | `"#4CAF50"` | Spring color (hex) |
-| `summer_color` | string | `"#FFC107"` | Summer color (hex) |
-| `autumn_color` | string | `"#FF9800"` | Autumn color (hex) |
-| `winter_color` | string | `"#2196F3"` | Winter color (hex) |
-| `day_text` | string | `"Day"` | Text for "Day" |
-| `day_of_year_text` | string | `"day of year"` | Text for "day of year" |
+- If the card does not appear after installation, wait a moment and refresh the page (clear browser cache / hard reload).
+- If you see "Custom element doesn't exist", try restarting Home Assistant and refreshing the browser cache.
+- Inspect the browser console (F12) for errors if the card still does not load.
 
-## 🔧 How it works
+## License
 
-The card computes the current day of year and displays it on a **horizontal timeline**. The timeline starts at Spring (Mar 21) so seasons appear in logical order without a break:
-```
-[Spring]→[Summer]→[Autumn]→[Winter]
-Mar 21   Jun 21   Sep 23   Dec 21   Mar 20
-```
-Season breakdown:
-- **Spring**: Mar 21 - Jun 20 = 92 days
-- **Summer**: Jun 21 - Sep 22 = 94 days
-- **Autumn**: Sep 23 - Dec 20 = 89 days
-- **Winter**: Dec 21 - Mar 20 = 90 days
-
-Example:
-- **Jan 5** (day 5 of year) → **Winter** (day 16 of winter) → indicator in last quarter
-- **Jul 15** (day 196 of year) → **Summer** (day 24 of summer) → indicator in second quarter
-
-## 🐛 Troubleshooting
-
-**Card does not appear:**
-- Ensure the file is in `/config/www/`
-- Verify the resource is added in Settings
-- Clear browser cache (CTRL+F5)
-- Check browser console (F12) for errors
-
-**Error "Custom element doesn't exist":**
-- Wait a moment after adding the resource
-- Restart Home Assistant
-- Refresh the browser with cache cleared
-
-## 📝 License
-
-MIT License
-
-This project is distributed under the MIT License — see the bundled `LICENSE` file for details.
-
-If you'd like a shorter README variant or a Polish version, let me know!
+MIT License — see the bundled `LICENSE` file for details.
