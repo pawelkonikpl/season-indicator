@@ -1,7 +1,7 @@
 {
   "name": "Season Indicator Card",
   "render_readme": true,
-  "content_in_root": true,
+  "content_in_root": false,
   "filename": "season-indicator-card.js"
 }
 
