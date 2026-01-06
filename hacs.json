@@ -1,10 +1,6 @@
 {
   "name": "Season Indicator Card",
-  "content_in_root": true,
-  "filename": "season-indicator-card.js",
-  "type": "plugin",
-  "zip_release": true,
-  "description": "A Lovelace card displaying the current season as a timeline (Polish names by default).",
-  "homeassistant": "frontend"
+  "render_readme": true,
+  "filename": "season-indicator-card.js"
 }
 
